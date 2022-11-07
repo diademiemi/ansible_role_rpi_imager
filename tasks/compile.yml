@@ -1,0 +1,26 @@
+---
+- name: Install Build dependencies
+  become: true
+  ansible.builtin.package:
+    name: "{{ rpi_imager_build_deps[ansible_os_family] }}"
+    state: present
+
+- name: Clone rpi-imager repository
+  ansible.builtin.git:
+    repo: https://github.com/raspberrypi/rpi-imager
+    dest: /tmp/rpi-imager
+    depth: 1
+    version: v{{ rpi_imager_version }}
+
+- name: Build rpi-imager
+  become: true
+  ansible.builtin.shell: |
+    mkdir -p build
+    cd build
+    cmake ../src
+    make
+    sudo make install
+  register: rpi_imager_build
+  changed_when: "rpi_imager_build.rc == 0 and 'Up-to-date: /usr/local/bin/rpi-imager' not in rpi_imager_build.stdout"
+  args:
+    chdir: /tmp/rpi-imager

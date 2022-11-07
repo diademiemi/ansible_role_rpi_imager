@@ -1,0 +1,13 @@
+---
+- name: Download Debian package
+  become: true
+  ansible.builtin.get_url:
+    url: "{{ rpi_imager_deb_url }}"
+    dest: "/tmp/rpi-imager_{{ rpi_imager_version }}_amd64.deb"
+    mode: 0644
+
+- name: Install Debian package
+  become: true
+  ansible.builtin.apt:
+    deb: "/tmp/rpi-imager_{{ rpi_imager_version }}_amd64.deb"
+    state: present
