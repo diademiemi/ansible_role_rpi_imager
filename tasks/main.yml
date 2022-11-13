@@ -1,6 +1,6 @@
 ---
 - name: Import install package tasks
-  import_tasks: install-package.yml
+  include_tasks: install-package.yml
   when: not rpi_imager_compile | bool
 - name: Import compile tasks
   include_tasks: compile.yml
